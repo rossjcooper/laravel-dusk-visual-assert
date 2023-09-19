@@ -13,7 +13,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         Browser::macro('assertScreenshot', function (string $name, float $threshold = 0.0001, int $metric = Imagick::METRIC_MEANSQUAREERROR) {
             /** @var Browser $this */
 
-            $filePath = sprintf('%s/%s.png', rtrim(Browser::$storeScreenshotsAt, '/'), $name);
+            $filePath = sprintf('%s/references/%s.png', rtrim(Browser::$storeScreenshotsAt, '/'), $name);
 
             $diffName = sprintf('%s-diff', $name);
             $diffFilePath = sprintf('%s/diffs/%s.png', rtrim(Browser::$storeScreenshotsAt, '/'), $diffName);
