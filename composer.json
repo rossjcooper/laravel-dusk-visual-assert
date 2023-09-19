@@ -1,0 +1,39 @@
+{
+    "name": "rossjcooper/laravel-dusk-visual-assert",
+    "description": "Adds assertions to compare screenshots taken during Laravel Dusk tests",
+    "keywords": [
+        "laravel",
+        "dusk",
+        "visual",
+        "assert",
+        "screenshot",
+        "image",
+        "comparison",
+        "regression"
+    ],
+    "version": "1.0.0",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Rossjcooper\\LaravelDuskVisualAssert\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ross Cooper",
+            "email": "therossjcooper@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "ext-imagick": "*",
+        "laravel/dusk": "^7"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rossjcooper\\LaravelDuskVisualAssert\\ServiceProvider"
+            ]
+        }
+    }
+}
