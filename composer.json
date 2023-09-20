@@ -11,7 +11,7 @@
         "comparison",
         "regression"
     ],
-    "version": "1.0.4",
+    "version": "1.0.5",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -25,15 +25,16 @@
             "email": "therossjcooper@gmail.com"
         }
     ],
-    "require-dev": {
-        "ext-imagick": "*",
-        "laravel/dusk": "^7"
-    },
+    "require-dev": {},
     "extra": {
         "laravel": {
             "providers": [
                 "Rossjcooper\\LaravelDuskVisualAssert\\ServiceProvider"
             ]
         }
+    },
+    "require": {
+        "laravel/dusk": "^7",
+        "ext-imagick": "*"
     }
 }

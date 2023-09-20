@@ -8,10 +8,19 @@ use PHPUnit\Framework\Assert;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
-        Browser::macro('assertScreenshot', function (string $name, float $threshold = 0.0001, int $metric = Imagick::METRIC_MEANSQUAREERROR) {
+        $this->publishes([
+            __DIR__.'/../config/visual-assert.php' => config_path('visual-assert.php'),
+        ], 'visual-assert-config');
+
+        Browser::macro('assertScreenshot', function (string $name, float|null $threshold = null, int|null $metric = null) {
             /** @var Browser $this */
+
+            $threshold = $threshold ?? config('visual-assert.default_threshold');
+            $metric = $metric ?? config('visual-assert.default_metric');
+            $width = config('visual-assert.screenshot_width');
+            $height = config('visual-assert.screenshot_height');
 
             $filePath = sprintf('%s/references/%s.png', rtrim(Browser::$storeScreenshotsAt, '/'), $name);
 
@@ -25,12 +34,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             }
 
             if (! file_exists($filePath)) {
+                $this->resize($width, $height);
                 $this->driver->takeScreenshot($filePath);
-                Assert::assertTrue(false, 'Reference screenshot stored successfully.');
+                Assert::assertTrue(true, 'Reference screenshot stored successfully.');
 
                 return $this;
             }
 
+
+            $this->resize($width, $height);
             $this->driver->takeScreenshot($diffFilePath);
 
             $originalImage =  new Imagick($filePath);
@@ -50,18 +62,29 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             return $this;
         });
 
-        Browser::macro('assertResponsiveScreenshots', function (string $name, float $threshold = 0.0001, int $metric = Imagick::METRIC_MEANSQUAREERROR) {
+        Browser::macro('assertResponsiveScreenshots', function (string $name, float|null $threshold = null, int|null $metric = null) {
+            /** @var Browser $this */
+            $threshold = $threshold ?? config('visual-assert.default_threshold');
+            $metric = $metric ?? config('visual-assert.default_metric');
+
             if (substr($name, -1) !== '/') {
                 $name .= '-';
             }
 
             foreach (Browser::$responsiveScreenSizes as $device => $size) {
                 $this->resize($size['width'], $size['height'])
-                    ->assertScreenshot("$name$device");
+                    ->assertScreenshot("$name$device", $threshold, $metric);
             }
 
             return $this;
         });
+    }
+
+    public function register(): void
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/visual-assert.php', 'visual-assert'
+        );
     }
 
 }
