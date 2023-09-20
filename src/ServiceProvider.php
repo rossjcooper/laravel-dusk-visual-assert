@@ -26,6 +26,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
             if (! file_exists($filePath)) {
                 $this->driver->takeScreenshot($filePath);
+                Assert::assertTrue(false, 'Reference screenshot stored successfully.');
+
+                return $this;
             }
 
             $this->driver->takeScreenshot($diffFilePath);
