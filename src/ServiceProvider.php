@@ -11,7 +11,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__.'/../config/visual-assert.php' => config_path('visual-assert.php'),
+            __DIR__ . '/../config/visual-assert.php' => config_path('visual-assert.php'),
         ], 'visual-assert-config');
 
         Browser::macro('assertScreenshot', function (string $name, float|null $threshold = null, int|null $metric = null) {
@@ -29,11 +29,11 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
             $directoryPath = dirname($filePath);
 
-            if (! is_dir($directoryPath)) {
+            if (!is_dir($directoryPath)) {
                 mkdir($directoryPath, 0777, true);
             }
 
-            if (! file_exists($filePath)) {
+            if (!file_exists($filePath)) {
                 $this->resize($width, $height);
                 $this->driver->takeScreenshot($filePath);
                 Assert::assertTrue(true, 'Reference screenshot stored successfully.');
@@ -45,8 +45,20 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             $this->resize($width, $height);
             $this->driver->takeScreenshot($diffFilePath);
 
-            $originalImage =  new Imagick($filePath);
-            $diffImage =  new Imagick($diffFilePath);
+            $originalImage = new Imagick($filePath);
+            $diffImage = new Imagick($diffFilePath);
+
+            if (
+                $originalImage->getImageWidth() !== $diffImage->getImageWidth()
+                || $originalImage->getImageHeight() !== $diffImage->getImageHeight()
+            ) {
+                if (config('visual-assert.skip_if_different_window_size', false)) {
+                    return $this;
+                }
+                Assert::assertTrue(false, sprintf('Screenshots are not the same size, ensure the screenshots are taken using the same Dusk environment.'));
+
+                return $this;
+            }
 
             $result = $originalImage->compareImages($diffImage, $metric);
 
@@ -83,7 +95,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/visual-assert.php', 'visual-assert'
+            __DIR__ . '/../config/visual-assert.php', 'visual-assert'
         );
     }
 

@@ -64,3 +64,16 @@ $this->browse(function (Browser $browser) {
 If you want to update the reference images simply delete them from the `tests/Browser/screenshots/references` directory and re-run your tests to generate new ones.
 
 I would recommend committing the reference images to your repository so you can track changes to them over time.
+
+## Caveats
+
+When comparing images, the package will expect the screenshots to be the same width and height as the reference images.
+
+```
+Error: Screenshots are not the same size, ensure the screenshots are taken using the same Dusk environment.
+Failed asserting that false is true.
+```
+
+If the Dusk environment has changed (headless-mode, window size, etc) then the comparison screenshots could be different sizes and the assertion will fail.
+
+You can change the `skip_if_different_window_size` config option to overcome this if you need to use a different Dusk environment temporarily.

@@ -11,4 +11,6 @@ return [
     // https://www.php.net/manual/en/imagick.compareimages.php
     'default_threshold' => 0.0001,
     'default_metric' => \Imagick::METRIC_MEANSQUAREERROR,
+
+    'skip_if_different_window_size' => false,
 ];
